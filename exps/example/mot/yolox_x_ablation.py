@@ -16,9 +16,9 @@ class Exp(MyExp):
         self.width = 1.25
         self.exp_name = os.path.split(os.path.realpath(__file__))[1].split(".")[0]
         self.train_ann = "train.json"
-        self.val_ann = "val_half.json"
+        self.val_ann = "test.json"
         self.input_size = (800, 1440)
-        self.test_size = (800, 1440)
+        self.test_size = (800, 1440) # TODO: should I change this?
         self.random_size = (18, 32)
         self.max_epoch = 80
         self.print_interval = 20
@@ -95,10 +95,10 @@ class Exp(MyExp):
         from yolox.data import MOTDataset, ValTransform
 
         valdataset = MOTDataset(
-            data_dir=os.path.join(get_yolox_datadir(), "mot"),
-            json_file=self.val_ann,
+            data_dir=os.path.join("/home/jiaruili/Documents/exp/advTraj/baselines/parallel_baseline_atk"),
+            json_file=self.val_ann, # test.json
             img_size=self.test_size,
-            name='train',
+            name='imgs',
             preproc=ValTransform(
                 rgb_means=(0.485, 0.456, 0.406),
                 std=(0.229, 0.224, 0.225),

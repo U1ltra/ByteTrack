@@ -5,9 +5,9 @@ import cv2
 
 
 # Use the same script for MOT16
-DATA_PATH = 'datasets/mot'
+DATA_PATH = '/home/jiaruili/Documents/exp/advTraj/baselines/parallel_baseline_atk'
 OUT_PATH = os.path.join(DATA_PATH, 'annotations')
-SPLITS = ['train_half', 'val_half', 'train', 'test']  # --> split training data to train_half and val_half.
+SPLITS = ['test']  # --> split training data to train_half and val_half.
 HALF_VIDEO = True
 CREATE_SPLITTED_ANN = True
 CREATE_SPLITTED_DET = True
@@ -20,7 +20,7 @@ if __name__ == '__main__':
 
     for split in SPLITS:
         if split == "test":
-            data_path = os.path.join(DATA_PATH, 'test')
+            data_path = os.path.join(DATA_PATH, 'imgs')
         else:
             data_path = os.path.join(DATA_PATH, 'train')
         out_path = os.path.join(OUT_PATH, '{}.json'.format(split))
@@ -40,7 +40,7 @@ if __name__ == '__main__':
             video_cnt += 1  # video sequence number.
             out['videos'].append({'id': video_cnt, 'file_name': seq})
             seq_path = os.path.join(data_path, seq)
-            img_path = os.path.join(seq_path, 'img1')
+            img_path = os.path.join(seq_path)
             ann_path = os.path.join(seq_path, 'gt/gt.txt')
             images = os.listdir(img_path)
             num_images = len([image for image in images if 'jpg' in image])  # half and half
@@ -54,13 +54,13 @@ if __name__ == '__main__':
             for i in range(num_images):
                 if i < image_range[0] or i > image_range[1]:
                     continue
-                img = cv2.imread(os.path.join(data_path, '{}/img1/{:06d}.jpg'.format(seq, i + 1)))
+                img = cv2.imread(os.path.join(data_path, '{}/{:d}.jpg'.format(seq, i)))
                 height, width = img.shape[:2]
-                image_info = {'file_name': '{}/img1/{:06d}.jpg'.format(seq, i + 1),  # image name.
-                              'id': image_cnt + i + 1,  # image number in the entire training set.
-                              'frame_id': i + 1 - image_range[0],  # image number in the video sequence, starting from 1.
-                              'prev_image_id': image_cnt + i if i > 0 else -1,  # image number in the entire training set.
-                              'next_image_id': image_cnt + i + 2 if i < num_images - 1 else -1,
+                image_info = {'file_name': '{}/{:d}.jpg'.format(seq, i),  # image name.
+                              'id': image_cnt + i,  # image number in the entire training set.
+                              'frame_id': i - image_range[0],  # image number in the video sequence, starting from 1.
+                              'prev_image_id': image_cnt + i - 1 if i > 0 else -1,  # image number in the entire training set.
+                              'next_image_id': image_cnt + i + 1 if i < num_images - 1 else -1,
                               'video_id': video_cnt,
                               'height': height, 'width': width}
                 out['images'].append(image_info)
